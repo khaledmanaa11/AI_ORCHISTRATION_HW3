@@ -24,3 +24,23 @@ build-backend = "hatchling.build"
 
 [tool.crewai]
 type = "crew"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--cov=reasearch_crew --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src/reasearch_crew"]
+omit = [
+    "src/reasearch_crew/main.py",
+    "src/reasearch_crew/tools/*",
+    "src/reasearch_crew/__init__.py",
+    "src/reasearch_crew/version.py",
+]
