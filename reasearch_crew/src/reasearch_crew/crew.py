@@ -8,7 +8,7 @@ load_dotenv()
 
 
 llm = LLM(
-    model="openrouter/deepseek/deepseek-v4-pro",   # your exact model ID from OpenRouter
+    model="openrouter/deepseek/deepseek-chat-v3.1:free",
     base_url="https://openrouter.ai/api/v1",
     api_key=os.getenv("OPENROUTER_API_KEY"),
 )
