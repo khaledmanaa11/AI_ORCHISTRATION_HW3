@@ -68,9 +68,9 @@ class ReasearchCrew():
 
     @task
     def writing_task(self) -> Task:
+        Path("output").mkdir(exist_ok=True)
         return Task(
             config=self.tasks_config['writing_task'], # type: ignore[index]
-            output_file='report.md'
         )
 
     @crew
