@@ -1,6 +1,6 @@
 # PROGRESS — single source of truth
 
-NEXT: B3
+NEXT: B4
 
 > Each session: do the step named in NEXT, then move NEXT to the line below it.
 > Legend: [ ] todo · [x] done · [~] in progress · [!] blocked.
@@ -12,7 +12,7 @@ Triplet: [PRD](PRD_bootstrap.md) · [PLAN](PLAN_bootstrap.md) · [TODO](TODO_boo
 - [x] B0 — Skeleton scaffolded via `crewai create crew reasearch_crew`.
 - [x] B1 — Repair `crew.py` imports (`os`, `LLM`/`Agent`/`Crew`/`Process`/`Task` from `crewai`, `load_dotenv`).
 - [x] B2 — Pin model id to `openrouter/deepseek/deepseek-chat-v3.1:free`.
-- [ ] B3 — Externalize model / base_url / key-env-var name to config (§7.2).
+- [x] B3 — Externalize model / base_url / key-env-var name to config (§7.2).
 - [ ] B4 — Add `version.py` with `__version__ = "1.00"`; align `pyproject.toml` and `rate_limits.json`.
 - [ ] B5 — Add project-root `.gitignore` covering `.env *.key *.pem credentials.json` + `.env-example`.
 - [ ] B6 — Fix `pyproject.toml` line 8 version spec; verify `uv sync --frozen` reproduces.
