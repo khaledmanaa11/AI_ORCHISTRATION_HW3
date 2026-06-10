@@ -1,6 +1,6 @@
 {
   "version": "1.00",
-  "model": "openrouter/nvidia/llama-nemotron-rerank-vl-1b-v2:free",
+  "model": "openrouter/google/gemma-4-31b-it:free",
   "base_url": "https://openrouter.ai/api/v1",
   "api_key_env": "OPENROUTER_API_KEY"
 }
