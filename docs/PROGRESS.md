@@ -1,6 +1,6 @@
 # PROGRESS — single source of truth
 
-NEXT: B6
+NEXT: B7
 
 > Each session: do the step named in NEXT, then move NEXT to the line below it.
 > Legend: [ ] todo · [x] done · [~] in progress · [!] blocked.
@@ -15,7 +15,7 @@ Triplet: [PRD](PRD_bootstrap.md) · [PLAN](PLAN_bootstrap.md) · [TODO](TODO_boo
 - [x] B3 — Externalize model / base_url / key-env-var name to config (§7.2).
 - [x] B4 — Add `version.py` with `__version__ = "1.00"`; align `pyproject.toml` and `rate_limits.json`.
 - [x] B5 — Add project-root `.gitignore` covering `.env *.key *.pem credentials.json` + `.env-example`.
-- [ ] B6 — Fix `pyproject.toml` line 8 version spec; verify `uv sync --frozen` reproduces.
+- [x] B6 — Fix `pyproject.toml` line 8 version spec; verify `uv sync --frozen` reproduces.
 - [ ] B7 — Drop the `report.md` override; keep `output/paper.md`; ensure `output/` is created.
 - [ ] B8 — Unit tests for crew construction (mocked `LLM`), ≥85% coverage on `crew.py`.
 - [ ] B9 — Integration smoke test for kickoff → `output/paper.md` (mocked `LLM`).
