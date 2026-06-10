@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .claude/hooks/relay_session_start.ps1" } ] }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(uv run pytest:*)", "Bash(uv run ruff:*)", "Bash(uv sync:*)", "Bash(uv add:*)", "Bash(uv lock:*)",
+      "Bash(git add:*)", "Bash(git commit:*)", "Bash(git push:*)", "Bash(git log:*)", "Bash(git status:*)", "Bash(git diff:*)", "Bash(git show:*)",
+      "PowerShell(uv run pytest:*)", "PowerShell(uv run ruff:*)", "PowerShell(git add:*)", "PowerShell(git commit:*)", "PowerShell(git push:*)", "PowerShell(git log:*)", "PowerShell(git status:*)", "PowerShell(git diff:*)", "PowerShell(git show:*)"
+    ]
+  }
+}

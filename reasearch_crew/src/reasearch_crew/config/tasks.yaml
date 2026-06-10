@@ -1,0 +1,15 @@
+research_task:
+  description: >
+    Conduct thorough research about {topic}. The current year is 2026.
+  expected_output: >
+    A research brief with 8-10 key findings as bullet points.
+  agent: researcher
+
+writing_task:
+  description: >
+    Using the research brief, write a full research paper about {topic}.
+  expected_output: >
+    A ~1000 word markdown paper with abstract, sections, and conclusion.
+    No fenced code blocks around the document.
+  agent: writer
+  output_file: output/paper.md
