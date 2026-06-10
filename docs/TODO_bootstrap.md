@@ -72,9 +72,11 @@
 
 - **TBD-1 → LOCKED.** LLM provider is **OpenRouter** via CrewAI's `LLM` (which wraps `litellm`);
   the `anthropic` SDK is **not** used. CLAUDE.md "LLM provider" section updated accordingly.
-- **TBD-2 → LOCKED.** Model id is **`openrouter/deepseek/deepseek-chat-v3.1:free`** (verified
-  live on openrouter.ai, 2026-06-10). This is the canonical free-tier general-purpose DeepSeek
-  chat model.
+- **TBD-2 → RE-LOCKED 2026-06-10 (post-live-attempt).** First lock was
+  `openrouter/deepseek/deepseek-chat-v3.1:free`; the actual B10 run got a 404 from OpenRouter
+  saying that slug is no longer free. Director picked **`openrouter/deepseek/deepseek-v4-pro`**
+  as the working slug. Because B3 externalized model id to `config/llm.json`, the swap was a
+  one-line config + two unit-test assertion updates — no `crew.py` change.
 - **TBD-3 → LOCKED.** Output path is **`output/paper.md`** (per `tasks.yaml`). Step B7 drops the
   `output_file='report.md'` override at `crew.py:47`.
 - **TBD-4 → LOCKED.** **Mocked-`LLM` tests only.** No `vcrpy` cassette. Rationale: §6 measures
