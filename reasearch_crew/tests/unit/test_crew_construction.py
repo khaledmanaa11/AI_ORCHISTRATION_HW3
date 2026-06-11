@@ -5,22 +5,22 @@ from reasearch_crew.crew import ReasearchCrew, _get_llm, _load_llm_config
 
 def test_load_llm_config_returns_pinned_model():
     cfg = _load_llm_config()
-    assert cfg["model"] == "openrouter/google/gemma-4-31b-it:free"
-    assert cfg["base_url"] == "https://openrouter.ai/api/v1"
-    assert cfg["api_key_env"] == "OPENROUTER_API_KEY"
+    assert cfg["model"] == "gemini/gemini-2.0-flash"
+    assert cfg["base_url"] == ""
+    assert cfg["api_key_env"] == "GEMINI_API_KEY"
     assert cfg["version"] == "1.00"
 
 
 def test_llm_built_from_env(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test-12345")
+    monkeypatch.setenv("GEMINI_API_KEY", "sk-test-12345")
     llm_obj = _get_llm()
     assert llm_obj.api_key == "sk-test-12345"
-    assert llm_obj.model == "openrouter/google/gemma-4-31b-it:free"
+    assert llm_obj.model == "gemini/gemini-2.0-flash"
 
 
 def test_missing_key_raises(monkeypatch):
-    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
         _get_llm()
 
 

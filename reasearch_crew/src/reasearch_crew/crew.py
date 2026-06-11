@@ -2,23 +2,25 @@ import json
 import os
 from pathlib import Path
 
-from crewai import LLM, Agent, Crew, Process, Task
+from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from dotenv import load_dotenv
+
+from .gateway import GatekeptLLM
 
 load_dotenv()
 
 _CONFIG_DIR = Path(__file__).parent / "config"
 _LLM_CONFIG_PATH = _CONFIG_DIR / "llm.json"
-_llm_singleton: LLM | None = None
+_llm_singleton: GatekeptLLM | None = None
 
 
 def _load_llm_config() -> dict:
     return json.loads(_LLM_CONFIG_PATH.read_text(encoding="utf-8"))
 
 
-def _get_llm() -> LLM:
+def _get_llm() -> GatekeptLLM:
     global _llm_singleton
     if _llm_singleton is None:
         cfg = _load_llm_config()
@@ -27,7 +29,7 @@ def _get_llm() -> LLM:
             raise RuntimeError(
                 f"Missing environment variable: {cfg['api_key_env']}"
             )
-        _llm_singleton = LLM(
+        _llm_singleton = GatekeptLLM(
             model=cfg["model"],
             base_url=cfg["base_url"],
             api_key=api_key,

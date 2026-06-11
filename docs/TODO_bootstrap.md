@@ -10,43 +10,43 @@
   `pyproject.toml`, `main.py`, `crew.py` (broken at HEAD — see B1), YAML configs, placeholder tool,
   local `.venv`. **DoD:** files present on disk. *(Done but not green — B1 closes the gap.)*
 
-- [ ] **B1** — Repair `crew.py` imports so the module actually loads. Add `import os`,
+- [x] **B1** — Repair `crew.py` imports so the module actually loads. Add `import os`,
   `from crewai import LLM, Agent, Crew, Process, Task`, `from dotenv import load_dotenv`, and a
   `load_dotenv()` call at module top. (Satisfies FR-B3; **DoD:**
   `uv run python -c "from reasearch_crew.crew import ReasearchCrew"` exits 0.)
 
-- [ ] **B2** — Lock the OpenRouter model id. Replace the placeholder
+- [x] **B2** — Lock the OpenRouter model id. Replace the placeholder
   `openrouter/deepseek/deepseek-v4-pro` with `openrouter/deepseek/deepseek-chat-v3.1:free`
   (verified live on openrouter.ai, 2026-06-10). (Satisfies FR-B3; **DoD:** a one-shot
   `LLM(...).call("ping")` returns text without a 404 from OpenRouter.)
 
-- [ ] **B3** — Externalize model / base_url / key-env-var name to `config/llm.json` (or merge into
+- [x] **B3** — Externalize model / base_url / key-env-var name to `config/llm.json` (or merge into
   `config/rate_limits.json` per §5.2). Replace inline strings in `crew.py` with config reads.
   (Satisfies FR-B3 & §7.2; **DoD:** grep finds zero hardcoded model / url / key strings in `src/`.)
 
-- [ ] **B4** — Add `src/reasearch_crew/version.py` with `__version__ = "1.00"`; mirror in
+- [x] **B4** — Add `src/reasearch_crew/version.py` with `__version__ = "1.00"`; mirror in
   `pyproject.toml` and the (future) `config/rate_limits.json`. (Satisfies §8.1; **DoD:** all three
   reads of "version" agree.)
 
-- [ ] **B5** — Add a project-root `.gitignore` covering `.env *.key *.pem credentials.json`, and
+- [x] **B5** — Add a project-root `.gitignore` covering `.env *.key *.pem credentials.json`, and
   add `.env-example` listing `OPENROUTER_API_KEY=` (blank value). (Satisfies §7.4; **DoD:**
   `git check-ignore .env` exits 0; `.env-example` is tracked.)
 
-- [ ] **B6** — Pin reproducibility. Fix `pyproject.toml` line 8
+- [x] **B6** — Pin reproducibility. Fix `pyproject.toml` line 8
   (`"crewai[tools]==1.0.0,<2.0.0"` → `">=1.0.0,<2.0.0"`); confirm `uv.lock` is committed; a clean
   `uv sync --frozen` reproduces. (Satisfies FR-B4 & §8.4; **DoD:** `uv sync --frozen` exits 0 on a
   fresh checkout.)
 
-- [ ] **B7** — Resolve the `output_file` conflict — keep `output/paper.md` (per `tasks.yaml`) and
+- [x] **B7** — Resolve the `output_file` conflict — keep `output/paper.md` (per `tasks.yaml`) and
   drop the `output_file='report.md'` override in `crew.py:47`; ensure `output/` is created at
   runtime. (Satisfies FR-B5; **DoD:** a kickoff writes exactly `output/paper.md` and nothing else.)
 
-- [ ] **B8** — Unit tests: `tests/unit/test_crew_construction.py` patches `os.environ` for FR-B3 /
+- [x] **B8** — Unit tests: `tests/unit/test_crew_construction.py` patches `os.environ` for FR-B3 /
   R-AC2 and asserts agent role interpolation for R-AC3. **Must mock the `LLM` client — no live
   calls.** (Satisfies R-AC2 & R-AC3 §6.1; **DoD:** `uv run pytest -q` passes; coverage on
   `crew.py` ≥ 85%.)
 
-- [ ] **B9** — Integration test: `tests/integration/test_kickoff_smoke.py` runs
+- [x] **B9** — Integration test: `tests/integration/test_kickoff_smoke.py` runs
   `ReasearchCrew().crew().kickoff(inputs={...})` with a fake `LLM.call` returning canned text;
   asserts `output/paper.md` exists in a tmp dir and contains the abstract heading.
   (Satisfies R-AC1 §6.1; **DoD:** passes in CI, leaves no artifacts outside tmp.)

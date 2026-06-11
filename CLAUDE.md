@@ -27,8 +27,10 @@ Plus, verified by reading the diff:
 - No secrets in code; `.env-example` present; `.gitignore` covers `.env *.key *.pem credentials.json` (§7.4).
 - Everything runs through `uv` — no `pip`/`python -m`/`venv` (§8.4).
 - Version starts at 1.00 in `version.py`, JSON `version`, `rate_limits.version` (§8.1).
-- {PROJECT FROZEN INVARIANT — none yet; once a `protocol/` or frozen module exists, name it here,
-  e.g. "do not edit src/hw3/protocol/; PROTOCOL_VERSION stays \"1.00\""}
+- **PROJECT FROZEN INVARIANT (api_gatekeeper §5.1):** all external API calls go through
+  `src/reasearch_crew/gateway/`; importing `litellm`, `anthropic`, or making raw
+  `httpx`/`requests` calls outside `gateway/` is a §5.1 violation. The five-class exception
+  hierarchy in `gateway/errors.py` is the only error shape consumers may catch.
 
 ## Commit voice (§8.2)
 Conversational, like someone sat with us. One logical step per commit. End every commit:

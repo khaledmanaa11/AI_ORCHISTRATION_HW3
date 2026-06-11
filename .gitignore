@@ -23,3 +23,7 @@ Thumbs.db
 
 # CrewAI / runtime artifacts
 output/
+
+# Gateway telemetry sinks (deferred JSON sink lives here when added)
+gateway_telemetry*.log
+gateway_telemetry*.json

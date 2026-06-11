@@ -1,4 +1,14 @@
 {
   "version": "1.00",
-  "providers": {}
+  "retry": {
+    "max_attempts": 3,
+    "base_delay_sec": 1.0,
+    "jitter": "full"
+  },
+  "providers": {
+    "gemini":     { "rpm": 15, "tpm": 1000000, "burst": 5 },
+    "openrouter": { "rpm": 20, "tpm": null, "burst": 5 },
+    "anthropic":  { "rpm": 50, "tpm": 40000, "burst": 10 },
+    "serper":     { "rpm": 60, "tpm": null, "burst": 5 }
+  }
 }
