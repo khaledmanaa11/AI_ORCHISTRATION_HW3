@@ -4,24 +4,33 @@ import warnings
 
 from datetime import datetime
 
+from reasearch_crew import settings
 from reasearch_crew.crew import ReasearchCrew
+from reasearch_crew.gateway import flush
+from reasearch_crew.report.outline import section_outline
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 
-def run():
-    """
-    Run the crew.
-    """
-    inputs = {
-        'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
+def _book_inputs() -> dict:
+    cfg = settings.book_config()
+    return {
+        "topic": cfg["topic"],
+        "current_year": str(datetime.now().year),
+        "outline": "; ".join(section_outline()),
     }
 
+
+def run():
+    """
+    Run the crew on the ALYASMEEN book, then report token totals (§11).
+    """
     try:
-        ReasearchCrew().crew().kickoff(inputs=inputs)
+        ReasearchCrew().crew().kickoff(inputs=_book_inputs())
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
+    finally:
+        flush()
 
 
 def train():
