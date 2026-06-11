@@ -1,0 +1,6 @@
+{
+  "version": "1.00",
+  "endpoints": {
+    "serper": "https://google.serper.dev/search"
+  }
+}
