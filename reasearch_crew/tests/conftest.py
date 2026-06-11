@@ -12,4 +12,4 @@ def reset_llm_singleton():
 
 @pytest.fixture
 def api_key(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-xyz")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key-xyz")
