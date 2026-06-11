@@ -26,3 +26,12 @@ writing_task:
     מפותח סעיף אחר סעיף.
   agent: author
   output_file: output/book.he.md
+
+typeset_task:
+  description: >
+    הפק את ה-PDF הסופי בעברית. הרץ את הכלי render_and_compile פעם אחת.
+    אל תכתוב LaTeX בעצמך.
+  expected_output: >
+    The filesystem path to the compiled book.pdf, produced by the
+    render_and_compile tool.
+  agent: typesetter

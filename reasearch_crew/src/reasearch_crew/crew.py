@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from .gateway import GatekeptLLM
 from .tools.search import web_search_tool
+from .tools.typeset import render_and_compile_tool
 
 load_dotenv()
 
@@ -64,8 +65,18 @@ class ReasearchCrew():
             verbose=True,
         )
 
+    @agent
+    def typesetter(self) -> Agent:
+        return Agent(
+            config=self.agents_config['typesetter'], # type: ignore[index]
+            llm=_get_llm(),
+            tools=[render_and_compile_tool],
+            verbose=True,
+        )
+
     @task
     def research_task(self) -> Task:
+        Path("output").mkdir(exist_ok=True)
         return Task(
             config=self.tasks_config['research_task'], # type: ignore[index]
         )
@@ -75,6 +86,12 @@ class ReasearchCrew():
         Path("output").mkdir(exist_ok=True)
         return Task(
             config=self.tasks_config['writing_task'], # type: ignore[index]
+        )
+
+    @task
+    def typeset_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['typeset_task'], # type: ignore[index]
         )
 
     @crew
