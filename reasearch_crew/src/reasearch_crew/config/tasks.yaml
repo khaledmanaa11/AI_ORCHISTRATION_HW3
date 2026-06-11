@@ -16,9 +16,13 @@ research_task:
 
 writing_task:
   description: >
-    Using the research brief, write a full research paper about {topic}.
+    כתוב ספר מחקר שוק בעברית על {topic}, על בסיס תקציר המחקר בלבד.
+    כתוב כל סעיף מהמתווה הבא במלואו, סעיף אחר סעיף, ללא קיצור:
+    {outline}. שלב את הטבלה, התרשים (גרף), הפניה לתמונה והמשוואות.
   expected_output: >
-    A ~1000 word markdown paper with abstract, sections, and conclusion.
-    No fenced code blocks around the document.
-  agent: writer
-  output_file: output/paper.md
+    מסמך Markdown בעברית בשם book.he.md הכולל: תקציר (abstract),
+    טבלת נתונים (table), גרף/תרשים (graph), הפניה לתמונה (figure),
+    וסעיף משוואות (equations). על המסמך להגיע ליעד העמודים שהוגדר,
+    מפותח סעיף אחר סעיף.
+  agent: author
+  output_file: output/book.he.md

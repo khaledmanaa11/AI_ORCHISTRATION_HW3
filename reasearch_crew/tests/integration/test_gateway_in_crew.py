@@ -64,7 +64,7 @@ def test_kickoff_routes_through_gatekeeper(api_key, monkeypatch, tmp_path):
     monkeypatch.setattr(Agent, "execute_task", fake_execute)
 
     ReasearchCrew().crew().kickoff(
-        inputs={"topic": "Gateway Test", "current_year": "2026"}
+        inputs={"topic": "Gateway Test", "current_year": "2026", "outline": "1, 2"}
     )
 
     assert len(intercepted) >= 1, "no LLM calls were routed through GatekeptLLM"

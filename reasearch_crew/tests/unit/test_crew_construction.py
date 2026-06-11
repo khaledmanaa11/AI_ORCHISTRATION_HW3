@@ -33,16 +33,16 @@ def test_get_llm_is_cached(api_key):
 def test_agents_loaded_from_yaml(api_key):
     crew_obj = ReasearchCrew().crew()
     roles = " ".join(a.role for a in crew_obj.agents)
-    assert "Research" in roles
-    assert "Writer" in roles
+    assert "Research" in roles  # the researcher
+    assert "מחבר" in roles      # the Hebrew author
     assert len(crew_obj.agents) == 2
 
 
 def test_tasks_loaded_from_yaml(api_key):
     crew_obj = ReasearchCrew().crew()
-    descs = " ".join(t.description for t in crew_obj.tasks)
-    assert "research" in descs.lower()
-    assert "paper" in descs.lower()
+    output_files = {t.output_file for t in crew_obj.tasks}
+    assert "output/research.md" in output_files
+    assert "output/book.he.md" in output_files
     assert len(crew_obj.tasks) == 2
 
 

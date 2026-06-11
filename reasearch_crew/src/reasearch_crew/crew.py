@@ -57,9 +57,9 @@ class ReasearchCrew():
         )
 
     @agent
-    def writer(self) -> Agent:
+    def author(self) -> Agent:
         return Agent(
-            config=self.agents_config['writer'], # type: ignore[index]
+            config=self.agents_config['author'], # type: ignore[index]
             llm=_get_llm(),
             verbose=True,
         )

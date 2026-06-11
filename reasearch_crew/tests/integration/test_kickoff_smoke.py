@@ -20,11 +20,11 @@ def test_paper_written_to_output_dir(api_key, monkeypatch, tmp_path):
     )
 
     ReasearchCrew().crew().kickoff(
-        inputs={"topic": "Smoke Test", "current_year": "2026"}
+        inputs={"topic": "Smoke Test", "current_year": "2026", "outline": "1, 2"}
     )
 
-    paper = tmp_path / "output" / "paper.md"
-    assert paper.exists(), f"missing {paper}; tmp contents: {list(tmp_path.iterdir())}"
-    content = paper.read_text(encoding="utf-8")
+    book = tmp_path / "output" / "book.he.md"
+    assert book.exists(), f"missing {book}; tmp contents: {list(tmp_path.iterdir())}"
+    content = book.read_text(encoding="utf-8")
     assert "Abstract" in content
     assert "Conclusion" in content

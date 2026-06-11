@@ -6,6 +6,7 @@
   "language": "he",
   "hebrew_font": "David",
   "page_target": 30,
+  "pages_per_section": 3,
   "pdf_engine": "xelatex",
   "bin": {
     "pandoc": "C:/Users/Hp/AppData/Local/Pandoc/pandoc.exe",
