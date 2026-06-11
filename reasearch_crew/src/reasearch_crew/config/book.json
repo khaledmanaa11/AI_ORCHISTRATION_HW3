@@ -1,0 +1,23 @@
+{
+  "version": "1.00",
+  "topic": "ALYASMEEN — WhatsApp commerce agent for small businesses",
+  "title": "מחקר שוק: אליאסמין",
+  "author": "Khaled",
+  "language": "he",
+  "hebrew_font": "David",
+  "page_target": 30,
+  "pdf_engine": "xelatex",
+  "bin": {
+    "pandoc": "C:/Users/Hp/AppData/Local/Pandoc/pandoc.exe",
+    "xelatex": "xelatex"
+  },
+  "paths": {
+    "research_md": "output/research.md",
+    "data_json": "output/data.json",
+    "book_md": "output/book.he.md",
+    "book_tex": "output/book.he.tex",
+    "book_pdf": "output/book.pdf",
+    "template": "templates/book.he.tex",
+    "assets": "assets"
+  }
+}
