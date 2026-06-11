@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 
+from crewai.tools import tool
+
 from reasearch_crew import settings
 from reasearch_crew.gateway import http_post
 
@@ -44,3 +46,11 @@ def web_search(query: str, *, max_results: int = 5) -> list[dict]:
         }
         for item in organic[:max_results]
     ]
+
+
+@tool("web_search")
+def web_search_tool(query: str) -> list[dict]:
+    """Search the web for grounded, citable facts (market size, ARPU, churn,
+    competitor pricing). Returns [{title, url, snippet}]. Cite every figure's
+    url as its source; if it returns empty, the data could not be verified."""
+    return web_search(query)

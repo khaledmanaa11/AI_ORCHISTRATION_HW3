@@ -8,6 +8,7 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from dotenv import load_dotenv
 
 from .gateway import GatekeptLLM
+from .tools.search import web_search_tool
 
 load_dotenv()
 
@@ -51,6 +52,7 @@ class ReasearchCrew():
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             llm=_get_llm(),
+            tools=[web_search_tool],
             verbose=True,
         )
 

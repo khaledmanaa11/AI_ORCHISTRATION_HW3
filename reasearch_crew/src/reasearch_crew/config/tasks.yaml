@@ -1,9 +1,18 @@
 research_task:
   description: >
-    Conduct thorough research about {topic}. The current year is 2026.
+    Research the market for {topic}. Use the web_search tool for every
+    quantitative claim. Quantify market sizing (TAM, SAM, SOM) and unit
+    economics (ARPU, gross margin, monthly churn, CAC, marketing spend,
+    customers acquired). Note the competitive landscape.
   expected_output: >
-    A research brief with 8-10 key findings as bullet points.
+    A markdown brief saved as research.md. First, 8-10 prose findings with an
+    inline source URL each. Then a SINGLE fenced block tagged `figures`
+    containing a JSON array; every object MUST have name, label, value
+    (number), unit, and source (the URL it came from). Example object:
+    {"name": "tam", "label": "TAM", "value": 1200000000, "unit": "USD",
+    "source": "https://..."}. Never emit a figure without a source.
   agent: researcher
+  output_file: output/research.md
 
 writing_task:
   description: >
