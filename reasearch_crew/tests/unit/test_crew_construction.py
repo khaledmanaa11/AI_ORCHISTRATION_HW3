@@ -5,7 +5,7 @@ from reasearch_crew.crew import ReasearchCrew, _get_llm, _load_llm_config
 
 def test_load_llm_config_returns_pinned_model():
     cfg = _load_llm_config()
-    assert cfg["model"] == "gemini/gemini-2.0-flash"
+    assert cfg["model"] == "gemini/gemini-2.5-flash"
     assert cfg["base_url"] == ""
     assert cfg["api_key_env"] == "GEMINI_API_KEY"
     assert cfg["version"] == "1.00"
@@ -15,7 +15,7 @@ def test_llm_built_from_env(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "sk-test-12345")
     llm_obj = _get_llm()
     assert llm_obj.api_key == "sk-test-12345"
-    assert llm_obj.model == "gemini/gemini-2.0-flash"
+    assert llm_obj.model == "gemini/gemini-2.5-flash"
 
 
 def test_missing_key_raises(monkeypatch):

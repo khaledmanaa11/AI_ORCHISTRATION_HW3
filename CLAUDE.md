@@ -40,7 +40,7 @@ Co-Authored-By: Khaled <khaled.mnaa43@gmail.com>
 Only the Orchestrator pushes, only after the gate is green.
 
 ## LLM provider
-Gemini free tier via CrewAI's `LLM` class; model `gemini/gemini-2.0-flash`; API key is
+Gemini free tier via CrewAI's `LLM` class; model `gemini/gemini-2.5-flash`; API key is
 `GEMINI_API_KEY` loaded from `.env`. `GatekeptLLM` forces the litellm path (`is_litellm=True`)
 so the subclass survives crewai's native-provider routing and every call flows through the gateway.
 (OpenRouter/DeepSeek kept in git history as a fallback, not in config — the B10/D1 model-thrash.)
