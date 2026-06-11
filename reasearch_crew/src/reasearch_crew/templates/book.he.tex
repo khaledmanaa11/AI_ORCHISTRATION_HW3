@@ -1,0 +1,32 @@
+\documentclass[12pt]{article}
+
+% --- Hebrew RTL typesetting: XeLaTeX + polyglossia (loads bidi for RTL) ---
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{hebrew}
+\setotherlanguage{english}
+
+% Hebrew font is injected from book.json (never hardcoded) via the pandoc
+% variable below — render.py passes -V hebrewfont=<book.json.hebrew_font>.
+\newfontfamily\hebrewfont[Script=Hebrew]{$hebrewfont$}
+\setmainfont[Script=Hebrew]{$hebrewfont$}
+
+% --- Report building blocks ---
+\usepackage{booktabs}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{graphicx}
+\graphicspath{{$assetdir$/}}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{$title$}
+\author{$author$}
+\date{}
+
+\begin{document}
+\maketitle
+
+$body$
+
+\end{document}
