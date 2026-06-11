@@ -40,8 +40,18 @@ Co-Authored-By: Khaled <khaled.mnaa43@gmail.com>
 Only the Orchestrator pushes, only after the gate is green.
 
 ## LLM provider
-OpenRouter via CrewAI's `LLM` class (which wraps `litellm`); free-tier DeepSeek model
-`openrouter/deepseek/deepseek-chat-v3.1:free`; API key is `OPENROUTER_API_KEY` loaded from `.env`.
+Gemini free tier via CrewAI's `LLM` class; model `gemini/gemini-2.0-flash`; API key is
+`GEMINI_API_KEY` loaded from `.env`. `GatekeptLLM` forces the litellm path (`is_litellm=True`)
+so the subclass survives crewai's native-provider routing and every call flows through the gateway.
+(OpenRouter/DeepSeek kept in git history as a fallback, not in config — the B10/D1 model-thrash.)
 Rate limits, not cost, are the constraint (free tier is rate-capped; cost ≈ $0). Tests always mock
 the client — no test touches the live API. Token-cost analysis required at submission (§11);
 report tokens in/out even though dollar cost is zero.
+
+## Typesetting prerequisite (Part D — Hebrew PDF)
+The book's deterministic tail needs three things on the run machine, all resolved from
+`config/book.json.bin` (never PATH): **pandoc**, **xelatex** (MiKTeX/TeX Live), and a Hebrew
+font (`book.json.hebrew_font`, default **David**). Every D-step before the live run mocks these
+subprocesses, so the gate stays green without them; only the `[HUMAN]` D15 live run needs them
+installed. `pandoc`/`xelatex` are local subprocesses — explicitly OUT of the gateway's network
+scope — but they raise a typed `report.errors.TypesetError`, never a raw `CalledProcessError`.

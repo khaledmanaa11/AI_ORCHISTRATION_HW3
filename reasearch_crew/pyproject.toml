@@ -41,7 +41,6 @@ addopts = "--cov=reasearch_crew --cov-report=term-missing"
 source = ["src/reasearch_crew"]
 omit = [
     "src/reasearch_crew/main.py",
-    "src/reasearch_crew/tools/*",
     "src/reasearch_crew/__init__.py",
     "src/reasearch_crew/version.py",
 ]

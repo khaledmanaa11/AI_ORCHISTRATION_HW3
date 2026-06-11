@@ -1,6 +1,6 @@
 # PROGRESS — single source of truth
 
-NEXT: D2
+NEXT: D15
 
 > Each session: do the step named in NEXT, then move NEXT to the line below it.
 > Legend: [ ] todo · [x] done · [~] in progress · [!] blocked.
@@ -40,19 +40,19 @@ Triplet: [PRD](PRD_api_gatekeeper.md) · [PLAN](PLAN_api_gatekeeper.md) · [TODO
 Triplet: [PRD](PRD_market_book.md) · [PLAN](PLAN_market_book.md) · [TODO](TODO_market_book.md) — approved 2026-06-11; keys (GEMINI + SERPER) in `.env`, xelatex/pandoc/David font verified present.
 
 - [x] D1 — Switch LLM to Gemini free (`gemini/gemini-2.0-flash`, `GEMINI_API_KEY`); add `gemini` to `rate_limits.json`; update `.env-example` + B8 model assertions. (Closes B10/G11 model-thrash.)
-- [ ] D2 — Add `config/book.json` (v1.00 schema: topic/title/he/font=David/page_target=30/bin/paths) + `assets/` with one curated image.
-- [ ] D3 — `tools/search.py::web_search` via `gateway.http_post(provider="serper")`; missing-key fallback.
-- [ ] D4 — `report/dataset.py`: parse Researcher's sourced figures → validated `output/data.json`.
-- [ ] D5 — Rewrite `agents.yaml`/`tasks.yaml` for the ALYASMEEN Researcher; wire `web_search` in `crew.py`.
-- [ ] D6 — `report/economics.py`: market-sizing + unit-economics equations, each `.latex` + `.value` from `Dataset`.
-- [ ] D7 — `report/figures.py`: pgfplots graph + booktabs table from `Dataset`.
-- [ ] D8 — Author agent + writing task → `output/book.he.md`, section-by-section to ≥30 pages (Hebrew).
-- [ ] D9 — `templates/book.he.tex`: XeLaTeX + polyglossia + bidi + configurable font; no report text.
-- [ ] D10 — `report/render.py::markdown_to_latex` (pandoc via `book.json.bin.pandoc`); typed `TypesetError`.
-- [ ] D11 — `report/compile.py::compile_pdf` (xelatex via `book.json.bin.xelatex`); typed `TypesetError`.
-- [ ] D12 — `tools/typeset.py` + Typesetter agent; wire 3 agents `Process.sequential` in `crew.py`.
-- [ ] D13 — `main.py` inputs from `book.json` + `gateway.flush()`; integration test for the full artifact chain.
-- [ ] D14 — Gate hygiene: coverage scope for `report/`+`tools/`, ≥85%, ≤150 LOC/file; docs update.
+- [x] D2 — Add `config/book.json` (v1.00 schema: topic/title/he/font=David/page_target=30/bin/paths) + `assets/` with one curated image. (`settings.py` loader; `assets/alyasmeen.png`.)
+- [x] D3 — `tools/search.py::web_search` via `gateway.http_post(provider="serper")`; missing-key fallback. (Serper URL in `config/endpoints.json`.)
+- [x] D4 — `report/dataset.py`: parse Researcher's sourced figures → validated `output/data.json`.
+- [x] D5 — Rewrite `agents.yaml`/`tasks.yaml` for the ALYASMEEN Researcher; wire `web_search` in `crew.py`.
+- [x] D6 — `report/economics.py`: market-sizing + unit-economics equations, each `.latex` + `.value` from `Dataset`.
+- [x] D7 — `report/figures.py`: pgfplots graph + booktabs table from `Dataset`.
+- [x] D8 — Author agent + writing task → `output/book.he.md`, section-by-section to ≥30 pages (Hebrew). (`report/outline.py`.)
+- [x] D9 — `templates/book.he.tex`: XeLaTeX + polyglossia + bidi + configurable font; no report text.
+- [x] D10 — `report/render.py::markdown_to_latex` (pandoc via `book.json.bin.pandoc`); typed `TypesetError`.
+- [x] D11 — `report/compile.py::compile_pdf` (xelatex via `book.json.bin.xelatex`); typed `TypesetError`.
+- [x] D12 — `tools/typeset.py` + Typesetter agent; wire 3 agents `Process.sequential` in `crew.py`. (`report/assemble.py`.)
+- [x] D13 — `main.py` inputs from `book.json` + `gateway.flush()`; integration test for the full artifact chain.
+- [x] D14 — Gate hygiene: coverage scope for `report/`+`tools/`, ≥85% (99%), ≤150 LOC/file; docs update.
 - [ ] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX; Director opens `output/book.pdf`, pastes `flush()` token totals.
 
 ### Blocked steps
