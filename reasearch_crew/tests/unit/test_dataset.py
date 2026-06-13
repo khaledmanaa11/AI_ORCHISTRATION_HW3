@@ -85,3 +85,53 @@ def test_zero_value_is_allowed():
         '"source": "https://s"}]\n```'
     )
     assert parse_figures(block)[0].value == 0.0
+
+
+_JSON_TAGGED = """Thought: here is my brief.
+
+```json
+[
+  {"name": "tam", "label": "TAM", "value": 8200000000, "unit": "USD",
+   "source": "https://dataintelo.example/tam"},
+  {"name": "churn", "label": "Churn", "value": 0.04, "unit": "decimal",
+   "source": "https://churnkey.example/churn"}
+]
+```
+"""
+
+_UNTAGGED = (
+    "prose\n\n```\n[{\"name\": \"tam\", \"value\": 1, \"unit\": \"USD\", "
+    '"source": "https://s"}]\n```'
+)
+
+_DECOY_THEN_FIGURES = """A config sample:
+
+```json
+{"model": "gemini", "rpm": 5}
+```
+
+and the figures:
+
+```json
+[{"name": "arpu", "value": 0.26, "unit": "USD", "source": "https://s"}]
+```
+"""
+
+
+def test_json_tagged_block_parses():
+    """The live Researcher tags the array ```json, not ```figures."""
+    figs = parse_figures(_JSON_TAGGED)
+    assert [f.name for f in figs] == ["tam", "churn"]
+    assert figs[0].value == 8200000000.0
+
+
+def test_untagged_fence_parses():
+    figs = parse_figures(_UNTAGGED)
+    assert figs[0].name == "tam"
+
+
+def test_non_figure_json_object_is_skipped():
+    """A decoy ```json object must not shadow the real figures array."""
+    figs = parse_figures(_DECOY_THEN_FIGURES)
+    assert len(figs) == 1
+    assert figs[0].name == "arpu"

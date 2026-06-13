@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 _FIGURES_BLOCK = re.compile(r"```figures\s*(.+?)```", re.DOTALL)
+_JSON_ARRAY = re.compile(r"```(?:json|figures)?\s*\n?(\[.*?\])\s*\n?```", re.DOTALL)
 _REQUIRED = ("name", "value", "unit", "source")
 
 
@@ -54,13 +55,39 @@ def _validate(raw: dict) -> Figure:
     )
 
 
+def _looks_like_figures(rows: object) -> bool:
+    return (
+        isinstance(rows, list)
+        and bool(rows)
+        and all(isinstance(r, dict) and "name" in r and "value" in r for r in rows)
+    )
+
+
+def _figures_block(text: str) -> str:
+    """Find the figures JSON, tolerating ```figures / ```json / untagged fences.
+
+    Live LLMs routinely tag the array ```json (or leave it bare) instead of the
+    ```figures we ask for, so the deterministic tail must not depend on the tag.
+    An explicit ```figures block still wins, preserving its strict error shape.
+    """
+    explicit = _FIGURES_BLOCK.search(text)
+    if explicit:
+        return explicit.group(1)
+    for body in _JSON_ARRAY.findall(text):
+        try:
+            rows = json.loads(body)
+        except json.JSONDecodeError:
+            continue
+        if _looks_like_figures(rows):
+            return body
+    raise DatasetError("no ```figures block found in research markdown")
+
+
 def parse_figures(text: str) -> list[Figure]:
-    """Pull the fenced ```figures JSON array out of research markdown."""
-    match = _FIGURES_BLOCK.search(text)
-    if not match:
-        raise DatasetError("no ```figures block found in research markdown")
+    """Pull the fenced figures JSON array out of research markdown."""
+    block = _figures_block(text)
     try:
-        rows = json.loads(match.group(1))
+        rows = json.loads(block)
     except json.JSONDecodeError as exc:
         raise DatasetError(f"figures block is not valid JSON: {exc}") from exc
     if not isinstance(rows, list) or not rows:
