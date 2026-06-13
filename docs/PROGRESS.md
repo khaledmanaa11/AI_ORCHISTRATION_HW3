@@ -53,7 +53,17 @@ Triplet: [PRD](PRD_market_book.md) · [PLAN](PLAN_market_book.md) · [TODO](TODO
 - [x] D12 — `tools/typeset.py` + Typesetter agent; wire 3 agents `Process.sequential` in `crew.py`. (`report/assemble.py`.)
 - [x] D13 — `main.py` inputs from `book.json` + `gateway.flush()`; integration test for the full artifact chain.
 - [x] D14 — Gate hygiene: coverage scope for `report/`+`tools/`, ≥85% (99%), ≤150 LOC/file; docs update.
-- [ ] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX; Director opens `output/book.pdf`, pastes `flush()` token totals.
+- [x] D16 — Deliver the section-by-section Author that D8/TBD-D6 promised but never shipped:
+  the live book is 14 pp, not 30, because `writing_task` is a SINGLE LLM call capped by
+  Gemini's output-token ceiling. Drive the Author one section at a time over
+  `section_outline()`, append each to `output/book.he.md`, and inject a per-section length
+  floor (from `book.json`) so each section is substantial. Every call stays gatekept.
+- [x] D17 — Replace the static placeholder image with a real AI-generated ALYASMEEN cover
+  via a gatekept image API (overrides TBD-D5). New `gateway/` image client through the same
+  limiter/retry/telemetry/translate stack; prompt derived from `book.json`; missing key
+  falls back to the bundled raster. No image API call outside `gateway/`.
+- [ ] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX; Director opens
+  `output/book.pdf`, confirms ≥30 pp + the generated cover, pastes `flush()` token totals.
 
 ### Blocked steps
 _(none yet)_

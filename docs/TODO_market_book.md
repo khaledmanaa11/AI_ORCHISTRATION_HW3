@@ -6,7 +6,7 @@
 
 ## Build order
 
-- [ ] **D1** — Switch the LLM to Gemini free tier (also closes the B10/G11 model-thrash).
+- [x] **D1** — Switch the LLM to Gemini free tier (also closes the B10/G11 model-thrash).
   Edit `config/llm.json` → `model: "gemini/gemini-2.0-flash"`, `api_key_env:
   "GEMINI_API_KEY"`. Add `"gemini": { "rpm": 15, "tpm": 1000000, "burst": 5 }` to
   `rate_limits.json`. Add `GEMINI_API_KEY=` to `.env-example`. Update the B8 model
@@ -24,41 +24,41 @@
   >   `"gemini"` (not the stale `"openrouter"`).
   > - [ ] B8 model assertion in `test_crew_construction.py` reads `gemini/gemini-2.0-flash`.
 
-- [ ] **D2** — Add `config/book.json` (the v1.00 schema in PLAN §config) and an
+- [x] **D2** — Add `config/book.json` (the v1.00 schema in PLAN §config) and an
   `assets/` dir holding **one** curated raster image (e.g. an ALYASMEEN logo/figure).
   (Satisfies §7.2 config externalization; **DoD:** a unit test loads `book.json` and
   asserts `language == "he"` and all `paths.*` keys exist; the asset file is committed.)
 
-- [ ] **D3** — Add `tools/search.py::web_search(query, *, max_results=5)` that calls
+- [x] **D3** — Add `tools/search.py::web_search(query, *, max_results=5)` that calls
   **`gateway.http_post(..., provider="serper")`** and normalizes results to
   `[{title, url, snippet}]`. Missing `SERPER_API_KEY` → return `[]` and set an
   "unverified" flag. (Satisfies FR-D2, R-AC2; **DoD:** `tests/unit/test_search_tool.py`
   mocks `http_post` and asserts the provider arg; a second test unsets the key and
   asserts the empty-result fallback. No raw `httpx`/`requests` in the file.)
 
-- [ ] **D4** — Add `report/dataset.py`: parse the Researcher's fenced figures block from
+- [x] **D4** — Add `report/dataset.py`: parse the Researcher's fenced figures block from
   `research.md`, validate every figure has `value`/`unit`/`source`, write `data.json`;
   expose a typed `read_dataset() -> Dataset`. (Satisfies FR-D3; **DoD:**
   `tests/unit/test_dataset.py` proves a sourced figure parses and a source-less figure
   raises; round-trips through `data.json`.)
 
-- [ ] **D5** — Rewrite `config/agents.yaml` + `config/tasks.yaml` for the **Researcher**:
+- [x] **D5** — Rewrite `config/agents.yaml` + `config/tasks.yaml` for the **Researcher**:
   ALYASMEEN market-research role, must use `web_search`, must emit `research.md` + the
   fenced figures block. Wire the tool onto the agent in `crew.py`. (Satisfies FR-D3;
   **DoD:** unit test builds the researcher with the tool attached (LLM mocked); ruff green.)
 
-- [ ] **D6** — Add `report/economics.py`: the report's equation set (market sizing
+- [x] **D6** — Add `report/economics.py`: the report's equation set (market sizing
   `TAM/SAM/SOM`, unit economics `LTV`, `CAC`, payback), each returning `.latex` **and**
   `.value` computed from `Dataset`. (Satisfies FR-D5, R-AC4; **DoD:**
   `tests/unit/test_economics.py` asserts each numeric result against a hand-computed
   fixture and that `.latex` is non-empty.)
 
-- [ ] **D7** — Add `report/figures.py`: `graph_snippet(ds)` (pgfplots) and
+- [x] **D7** — Add `report/figures.py`: `graph_snippet(ds)` (pgfplots) and
   `table_snippet(ds)` (booktabs), both built from `Dataset`. (Satisfies FR-D6, R-AC3;
   **DoD:** `tests/unit/test_figures.py` asserts the table rows and plot coordinates equal
   the `data.json` values; snippets are balanced LaTeX environments.)
 
-- [ ] **D8** — Add the **Author** agent + writing task: emit `output/book.he.md` — Hebrew
+- [x] **D8** — Add the **Author** agent + writing task: emit `output/book.he.md` — Hebrew
   abstract, the table, a figure reference (`assets/` image), the graph, and the equations
   section, authored **section-by-section** to reach the `book.json.page_target` (≥30
   pages) without truncation (ADR-D6). The section outline is config/task-driven; each
@@ -67,45 +67,74 @@
   `output_file` is `book.he.md` and that the outline has enough sections to meet the
   page target; tasks.yaml declares the required structural elements.)
 
-- [ ] **D9** — Add `templates/book.he.tex`: XeLaTeX + `polyglossia` (main = Hebrew) +
+- [x] **D9** — Add `templates/book.he.tex`: XeLaTeX + `polyglossia` (main = Hebrew) +
   `bidi`, configurable Hebrew font, `booktabs`, `pgfplots`, `graphicx`. No report text.
   (Satisfies FR-D7; **DoD:** a unit test asserts the template references the font *token*
   (substituted from `book.json`, not hardcoded) and loads the required packages.)
 
-- [ ] **D10** — Add `report/render.py::markdown_to_latex(md, tex, *, template)` (pandoc
+- [x] **D10** — Add `report/render.py::markdown_to_latex(md, tex, *, template)` (pandoc
   subprocess; pandoc path from `book.json.bin.pandoc`, not PATH) raising `TypesetError`
   on failure. (Satisfies FR-D8, R-AC5; **DoD:** `tests/unit/test_render.py` mocks
   subprocess and asserts argv[0] is the configured pandoc path and argv contains the
   template path and `--pdf-engine=xelatex`; non-zero exit raises `TypesetError`.)
 
-- [ ] **D11** — Add `report/compile.py::compile_pdf(tex) -> Path` (xelatex subprocess;
+- [x] **D11** — Add `report/compile.py::compile_pdf(tex) -> Path` (xelatex subprocess;
   engine path + flags from `book.json.bin.xelatex`) raising `TypesetError` on failure.
   (Satisfies FR-D8; **DoD:** `tests/unit/test_compile.py` mocks subprocess, asserts the
   configured engine argv and a returned `book.pdf` path; non-zero exit raises
   `TypesetError`.)
 
-- [ ] **D12** — Add `tools/typeset.py::render_and_compile` and the **Typesetter** agent +
+- [x] **D12** — Add `tools/typeset.py::render_and_compile` and the **Typesetter** agent +
   task; wire all three agents `Process.sequential` in `crew.py`
   (research → author → typeset). (Satisfies FR-D9; **DoD:** unit test builds the
   typesetter with the tool attached (LLM + subprocess mocked); ruff green.)
 
-- [ ] **D13** — Edit `main.py`: load inputs from `book.json`, kickoff, then call
+- [x] **D13** — Edit `main.py`: load inputs from `book.json`, kickoff, then call
   `gateway.flush()`. Add `tests/integration/test_book_pipeline.py`: full kickoff with
   mocked LLM + mocked pandoc/xelatex produces the artifact chain ending at `book.pdf`.
   (Satisfies R-AC1; **DoD:** integration test asserts `research.md → data.json →
   book.he.md → book.he.tex → book.pdf` all produced in order; `flush()` prints token
   totals.)
 
-- [ ] **D14** — Gate hygiene + docs: add `report/`, `tools/` to coverage scope; confirm
+- [x] **D14** — Gate hygiene + docs: add `report/`, `tools/` to coverage scope; confirm
   project coverage ≥ 85% and every file ≤ 150 LOC; update `docs/PROGRESS.md`; note the
   TeX/pandoc prerequisite in `CLAUDE.md` if not already. (Satisfies §6.2/§3.2 gate;
   **DoD:** `uv run ruff check`, `uv run pytest -q`, `uv run pytest --cov` all green.)
 
+- [x] **D16** — **Deliver the section-by-section Author** (the behaviour D8 + TBD-D6 were
+  marked done for but never actually shipped). Today `config/tasks.yaml::writing_task` is a
+  **single** Task → one LLM call → Gemini's output-token ceiling caps the live book at ~14
+  pp instead of 30. Make the Author compose one section at a time over `section_outline()`
+  and append each to `output/book.he.md`, so length scales without truncation. Inject a
+  per-section length floor and `pages_per_section` into each section prompt from config —
+  add `words_per_page` (or `min_words_per_section`) to `book.json` so nothing is hardcoded.
+  Mechanism is the Developer's call (a `report/` writer loop driving `GatekeptLLM` per
+  section is the simplest fit), but **every section call MUST stay on the gatekept LLM
+  path** (§5.1) and the Typesetter chain must be unchanged downstream. (Satisfies FR-D4
+  for real; **DoD:** a unit test with a mocked LLM that returns a stub per call asserts (a)
+  exactly one call per outline section, (b) `book.he.md` contains every section heading in
+  order, (c) the per-section word floor is read from `book.json` and injected into the
+  prompt — not a literal in `.py`; `tests/integration/test_book_pipeline.py` stays green;
+  every file ≤150 LOC; `ruff`/`pytest`/cov ≥85% green.)
+
+- [x] **D17** — **Real AI-generated cover** (overrides TBD-D5's "one bundled raster"). Add a
+  gatekept image-generation client in `gateway/` (e.g. `gateway/images.py`) that calls the
+  image API (Gemini image / Imagen) through the **same** limiter/retry/telemetry/translate
+  stack as `http.py`; model + endpoint from config, key from env, failures raised as the
+  five-class gateway errors. A `report/` step builds the cover prompt from `book.json`
+  (`topic`/`title`), generates the PNG into `assets/`, and `assemble.py` embeds it. Missing
+  key ⇒ fall back to the existing bundled `assets/alyasmeen.png` (never crash the run). **No
+  image API call anywhere outside `gateway/`** (frozen invariant §5.1). (Satisfies the
+  "real picture" ask; **DoD:** unit tests mock the image client — no live call — and assert
+  the provider arg routes through the gateway, the missing-key fallback returns the bundled
+  asset, and `assemble.deterministic_block` embeds the produced file; no key/model id in any
+  `.py`; gate green.)
+
 - [ ] **D15** — `[HUMAN]` Live run. Director sets real `GEMINI_API_KEY` (+ optional
   `SERPER_API_KEY`) in `.env`, ensures MiKTeX/TeX Live + pandoc + a Hebrew font are
   installed, runs `uv run run_crew`, and **opens `output/book.pdf`**. (**DoD:** Director
-  confirms the Hebrew PDF renders with ≥1 table, ≥1 figure, ≥1 graph, ≥1 equation, and
-  pastes the `flush()` token totals into the commit.)
+  confirms the Hebrew PDF renders **≥30 pp**, the **generated cover**, and ≥1 table, ≥1
+  figure, ≥1 graph, ≥1 equation, and pastes the `flush()` token totals into the commit.)
 
 ## Coverage matrix (§6 — every requirement has a test)
 
