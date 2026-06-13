@@ -1,33 +1,36 @@
 import pytest
 
-from reasearch_crew.crew import ReasearchCrew, _get_llm, _load_llm_config
+from reasearch_crew.crew import ReasearchCrew, _get_llm
+from reasearch_crew.gateway import load_llm_config
 
 
 def test_load_llm_config_returns_pinned_model():
-    cfg = _load_llm_config()
+    cfg = load_llm_config()
     assert cfg["model"] == "gemini/gemini-2.5-flash"
     assert cfg["base_url"] == ""
-    assert cfg["api_key_env"] == "GEMINI_API_KEY"
     assert cfg["version"] == "1.00"
 
 
-def test_llm_built_from_env(monkeypatch):
-    monkeypatch.setenv("GEMINI_API_KEY", "sk-test-12345")
-    llm_obj = _get_llm()
-    assert llm_obj.api_key == "sk-test-12345"
+def test_phase_llms_are_routed_and_cached(api_key):
+    crew_obj = ReasearchCrew()
+    llms = {
+        "research": crew_obj.researcher().llm,
+        "compose": crew_obj.get_llm("compose"),
+        "typeset": crew_obj.typesetter().llm,
+    }
+    assert {phase: llm.api_key for phase, llm in llms.items()} == api_key
+    assert len({id(llm) for llm in llms.values()}) == 3
+    assert _get_llm("compose") is llms["compose"]
+    llm_obj = llms["research"]
     assert llm_obj.model == "gemini/gemini-2.5-flash"
 
 
-def test_missing_key_raises(monkeypatch):
-    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
-    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
-        _get_llm()
-
-
-def test_get_llm_is_cached(api_key):
-    first = _get_llm()
-    second = _get_llm()
-    assert first is second
+def test_missing_phase_key_raises(monkeypatch):
+    cfg = load_llm_config()
+    env_name = cfg["key_envs"]["research"]
+    monkeypatch.delenv(env_name, raising=False)
+    with pytest.raises(RuntimeError, match=env_name):
+        _get_llm("research")
 
 
 def test_agents_loaded_from_yaml(api_key):

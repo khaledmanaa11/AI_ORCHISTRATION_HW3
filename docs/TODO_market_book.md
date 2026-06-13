@@ -130,11 +130,13 @@
   asset, and `assemble.deterministic_block` embeds the produced file; no key/model id in any
   `.py`; gate green.)
 
-- [ ] **D15** — `[HUMAN]` Live run. Director sets real `GEMINI_API_KEY` (+ optional
-  `SERPER_API_KEY`) in `.env`, ensures MiKTeX/TeX Live + pandoc + a Hebrew font are
-  installed, runs `uv run run_crew`, and **opens `output/book.pdf`**. (**DoD:** Director
-  confirms the Hebrew PDF renders **≥30 pp**, the **generated cover**, and ≥1 table, ≥1
-  figure, ≥1 graph, ≥1 equation, and pastes the `flush()` token totals into the commit.)
+- [ ] **D15** — `[HUMAN]` Live run. Director sets real, separately provisioned
+  `GEMINI_API_KEY_RESEARCH`, `GEMINI_API_KEY_COMPOSE`, and
+  `GEMINI_API_KEY_TYPESET` values (+ optional `SERPER_API_KEY`) in `.env`, ensures
+  MiKTeX/TeX Live + pandoc + a Hebrew font are installed, runs `uv run run_crew`,
+  and **opens `output/book.pdf`**. (**DoD:** Director confirms the Hebrew PDF renders
+  **≥30 pp**, the **generated cover**, and ≥1 table, ≥1 figure, ≥1 graph, ≥1 equation,
+  and pastes the `flush()` token totals into the commit.)
 
 ## Coverage matrix (§6 — every requirement has a test)
 

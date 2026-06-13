@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import base64
-import os
 from pathlib import Path
 
 from reasearch_crew import settings
-from reasearch_crew.gateway import GatewayError, http_post
+from reasearch_crew.gateway import GatewayError, http_post, resolve_key
 
 _MODEL_SLOT = "<model>"
 
@@ -25,12 +24,10 @@ def _fallback() -> Path:
 def generate_cover() -> Path:
     """Generate the ALYASMEEN cover through the gateway image seam (§5.1).
 
-    Mirrors :func:`tools.search.web_search`: with no ``GEMINI_API_KEY`` the call
-    is skipped and the bundled fallback path is returned, so the run never
-    crashes (overrides locked decision TBD-D5). Any rate-limit / decode / shape
-    failure also degrades to the bundled cover rather than raising.
+    A missing typeset-phase credential skips the call and returns the bundled
+    image. Gateway, decode, or response-shape failures also degrade safely.
     """
-    key = os.getenv("GEMINI_API_KEY")
+    _, key = resolve_key("typeset", required=False)
     if not key:
         return _fallback()
 

@@ -1,3 +1,4 @@
+import base64
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -5,9 +6,12 @@ import pytest
 
 from reasearch_crew.gateway import telemetry
 from reasearch_crew.gateway import rate_limiter
+from reasearch_crew import settings
 from reasearch_crew.report import compile as compile_mod
+from reasearch_crew.report import cover as cover_mod
 from reasearch_crew.report import render as render_mod
 
+_PNG = b"\x89PNG\r\n\x1a\n-fake-cover"
 _RESEARCH_MD = """# מחקר שוק אליאסמין
 
 ממצאים עם מקורות.
@@ -43,9 +47,10 @@ def _fake_subprocess(argv, capture_output=False, text=False, **kwargs):
 
 
 @pytest.fixture(autouse=True)
-def _reset():
+def _reset(monkeypatch):
     telemetry.reset()
     rate_limiter.reset()
+    monkeypatch.setattr(rate_limiter.time, "sleep", lambda seconds: None)
     yield
     telemetry.reset()
     rate_limiter.reset()
@@ -53,6 +58,14 @@ def _reset():
 
 def test_full_chain(api_key, monkeypatch, tmp_path, capsys):
     monkeypatch.chdir(tmp_path)
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    monkeypatch.setattr(settings, "asset_dir", lambda: assets)
+
+    def fake_cover_post(url, headers=None, json=None, **kwargs):
+        assert headers["x-goog-api-key"] == api_key["typeset"]
+        encoded = base64.b64encode(_PNG).decode()
+        return {"predictions": [{"bytesBase64Encoded": encoded}]}
 
     from crewai import LLM
     from crewai.agent import Agent
@@ -67,6 +80,7 @@ def test_full_chain(api_key, monkeypatch, tmp_path, capsys):
     )
     monkeypatch.setattr(render_mod.subprocess, "run", _fake_subprocess)
     monkeypatch.setattr(compile_mod.subprocess, "run", _fake_subprocess)
+    monkeypatch.setattr(cover_mod, "http_post", fake_cover_post)
 
     def fake_execute(self, task, context=None, tools=None):
         self.llm.call([{"role": "user", "content": "x"}])  # bank some tokens

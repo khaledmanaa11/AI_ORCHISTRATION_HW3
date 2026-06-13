@@ -79,4 +79,4 @@ def test_kickoff_routes_through_gatekeeper(api_key, monkeypatch, tmp_path):
 def test_get_llm_returns_gatekept_instance(api_key):
     from reasearch_crew.crew import _get_llm
 
-    assert isinstance(_get_llm(), GatekeptLLM)
+    assert isinstance(_get_llm("research"), GatekeptLLM)

@@ -1,14 +1,18 @@
 """Smoke test: full run() pipeline produces book.he.md with Hebrew headings."""
+import base64
 from pathlib import Path
 from types import SimpleNamespace
 
 from crewai import LLM
 from crewai.agent import Agent
 
+from reasearch_crew import settings
 from reasearch_crew.gateway import rate_limiter, telemetry
 from reasearch_crew.report import compile as compile_mod
+from reasearch_crew.report import cover as cover_mod
 from reasearch_crew.report import render as render_mod
 
+_PNG = b"\x89PNG\r\n\x1a\n-fake-cover"
 _RESEARCH_MD = """# מחקר שוק
 ממצאים.
 
@@ -40,6 +44,19 @@ def _fake_sub(argv, capture_output=False, text=False, **kwargs):
 
 def test_paper_written_to_output_dir(api_key, monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(rate_limiter.time, "sleep", lambda seconds: None)
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    monkeypatch.setattr(settings, "asset_dir", lambda: assets)
+    monkeypatch.setattr(
+        cover_mod,
+        "http_post",
+        lambda *a, **k: {
+            "predictions": [{
+                "bytesBase64Encoded": base64.b64encode(_PNG).decode()
+            }]
+        },
+    )
 
     monkeypatch.setattr(
         LLM,

@@ -62,6 +62,11 @@ Triplet: [PRD](PRD_market_book.md) · [PLAN](PLAN_market_book.md) · [TODO](TODO
   via a gatekept image API (overrides TBD-D5). New `gateway/` image client through the same
   limiter/retry/telemetry/translate stack; prompt derived from `book.json`; missing key
   falls back to the bundled raster. No image API call outside `gateway/`.
+- [x] D18 — Route the pipeline through three required, config-driven Gemini keys:
+  Researcher (`GEMINI_API_KEY_RESEARCH`), section composer (`GEMINI_API_KEY_COMPOSE`),
+  and Typesetter plus cover generation (`GEMINI_API_KEY_TYPESET`). Centralize credential
+  resolution beside the gateway, isolate tests from real `.env` values, and update setup
+  documentation. Triplet approved 2026-06-13.
 - [ ] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX; Director opens
   `output/book.pdf`, confirms ≥30 pp + the generated cover, pastes `flush()` token totals.
 

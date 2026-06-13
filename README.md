@@ -29,6 +29,7 @@ reasearch_crew/src/reasearch_crew/
 │                      #   endpoints.json, llm.json   (no hardcoded host/model/key)
 ├── gateway/           # the ONLY egress seam for external API calls
 │   ├── llm.py         #   GatekeptLLM(crewai.LLM) — forces the litellm path
+│   ├── credentials.py #   config-driven phase credential resolution
 │   ├── http.py        #   http_post: limiter + retry + telemetry + translate
 │   ├── rate_limiter.py#   per-provider token bucket
 │   ├── retry.py       #   tenacity: 3 retries on 429/5xx, none on 401/400
@@ -58,12 +59,16 @@ uv sync --frozen
 Copy `.env-example` to `.env` in the repo root and fill in your keys:
 
 ```
-GEMINI_API_KEY=    # Google AI Studio free key — the LLM provider
-SERPER_API_KEY=    # serper.dev — grounded web search
+GEMINI_API_KEY_RESEARCH=  # Researcher agent
+GEMINI_API_KEY_COMPOSE=   # section-by-section composition
+GEMINI_API_KEY_TYPESET=   # Typesetter agent and cover generation
+SERPER_API_KEY=           # optional serper.dev grounded web search
 ```
 
-The model is `gemini/gemini-2.5-flash` (Gemini free tier). The constraint is rate limits,
-not cost (free tier is ~5 RPM; dollar cost ≈ $0).
+Use a separate Google AI Studio project/key for each Gemini phase. The pipeline does not
+fall back to a shared key when a required phase key is missing. The model is
+`gemini/gemini-2.5-flash` (Gemini free tier); the constraint is rate limits, not cost
+(free tier is ~5 RPM; dollar cost ≈ $0).
 
 ### Typesetting prerequisites (for the live PDF run)
 

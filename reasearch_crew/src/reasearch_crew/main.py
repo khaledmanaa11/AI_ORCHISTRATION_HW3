@@ -42,7 +42,7 @@ def run():
             encoding="utf-8"
         )
         compose_book(
-            crew_obj.get_llm(),
+            crew_obj.get_llm("compose"),
             research_brief,
             settings.output_path("book_md"),
         )

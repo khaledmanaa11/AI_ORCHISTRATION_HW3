@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from reasearch_crew import settings
+from reasearch_crew.gateway import load_llm_config
 from reasearch_crew.report import assemble, cover
 from reasearch_crew.report.dataset import Dataset, Figure
 
@@ -38,20 +39,23 @@ def assets(tmp_path, monkeypatch):
 
 def test_routes_through_gateway_and_writes_png(assets, monkeypatch):
     captured = {}
+    key_env = load_llm_config()["key_envs"]["typeset"]
 
     def fake_post(url, headers=None, json=None, *, provider, timeout=30.0):
         captured["url"] = url
+        captured["key"] = headers["x-goog-api-key"]
         captured["provider"] = provider
         captured["prompt"] = json["instances"][0]["prompt"]
         return {"predictions": [{"bytesBase64Encoded": base64.b64encode(_PNG).decode()}]}
 
     monkeypatch.setattr(cover, "http_post", fake_post)
-    monkeypatch.setenv("GEMINI_API_KEY", "g-key")
+    monkeypatch.setenv(key_env, "typeset-key")
 
     out = cover.generate_cover()
 
     # (a) the call left report/ through the gateway under the image provider
     assert captured["provider"] == "gemini_image"
+    assert captured["key"] == "typeset-key"
     assert captured["url"].startswith("https://")
     assert "<model>" not in captured["url"]  # model substituted from config
     assert settings.book_config()["title"] in captured["prompt"]
@@ -62,7 +66,9 @@ def test_routes_through_gateway_and_writes_png(assets, monkeypatch):
 
 
 def test_missing_key_returns_fallback_without_calling(assets, monkeypatch):
-    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    key_env = load_llm_config()["key_envs"]["typeset"]
+    monkeypatch.delenv(key_env, raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "retired-shared-key")
 
     def explode(*a, **k):
         raise AssertionError("must not hit the gateway without a key")
@@ -93,10 +99,12 @@ def test_bundled_fallback_is_committed():
     assert real.exists() and real.stat().st_size > 0
 
 
-def test_env_example_lists_gemini_key():
+def test_env_example_lists_all_phase_keys():
     for parent in Path(settings.package_dir()).parents:
         env = parent / ".env-example"
         if env.exists():
-            assert "GEMINI_API_KEY" in env.read_text()
+            text = env.read_text()
+            for env_name in load_llm_config()["key_envs"].values():
+                assert env_name in text
             return
     pytest.fail("no .env-example found")

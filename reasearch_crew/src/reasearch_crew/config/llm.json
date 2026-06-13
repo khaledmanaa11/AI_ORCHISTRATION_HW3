@@ -2,5 +2,9 @@
   "version": "1.00",
   "model": "gemini/gemini-2.5-flash",
   "base_url": "",
-  "api_key_env": "GEMINI_API_KEY"
+  "key_envs": {
+    "research": "GEMINI_API_KEY_RESEARCH",
+    "compose": "GEMINI_API_KEY_COMPOSE",
+    "typeset": "GEMINI_API_KEY_TYPESET"
+  }
 }
