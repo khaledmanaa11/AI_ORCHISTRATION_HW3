@@ -11,7 +11,7 @@ from reasearch_crew.report.errors import TypesetError
 def _capture(monkeypatch, returncode=0, stderr=""):
     seen = {}
 
-    def fake_run(argv, capture_output=False, text=False):
+    def fake_run(argv, capture_output=False, text=False, **kwargs):
         seen["argv"] = argv
         return SimpleNamespace(returncode=returncode, stdout="", stderr=stderr)
 
@@ -28,7 +28,7 @@ def test_pandoc_argv(monkeypatch, tmp_path):
     argv = seen["argv"]
     assert argv[0] == settings.book_config()["bin"]["pandoc"]
     assert str(template) in argv
-    assert "--pdf-engine=xelatex" in argv
+    assert f"--pdf-engine={settings.book_config()['pdf_engine']}" in argv
     assert "--template" in argv
     assert out == Path(tmp_path / "book.he.tex")
 

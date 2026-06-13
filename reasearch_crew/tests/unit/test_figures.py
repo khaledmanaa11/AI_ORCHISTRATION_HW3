@@ -2,8 +2,10 @@ import pytest
 
 from reasearch_crew.report.dataset import Dataset, Figure
 from reasearch_crew.report.figures import (
+    _human_usd,
     funnel_values,
     graph_snippet,
+    kpi_cards,
     table_snippet,
 )
 
@@ -37,7 +39,7 @@ def test_table_has_a_row_per_figure_and_is_balanced(ds):
     assert _balanced(tex)
     assert tex.count("\\\\") >= len(ds.figures)
     assert "1,200,000,000.00" in tex  # TAM value rendered
-    assert "\\url{https://s/x}" in tex
+    assert "\\href{https://s/x}" in tex  # source linked by domain
 
 
 def test_graph_coordinates_equal_data_values(ds):
@@ -58,3 +60,17 @@ def test_graph_is_pgfplots(ds):
     tex = graph_snippet(ds)
     assert "\\begin{axis}" in tex
     assert "ybar" in tex
+
+
+def test_human_usd_scales_by_magnitude():
+    assert _human_usd(14_900_000_000) == "\\$14.90B"
+    assert _human_usd(119_200_000) == "\\$119M"
+    assert _human_usd(50_000) == "\\$50K"
+    assert _human_usd(750) == "\\$750"
+
+
+def test_kpi_cards_emit_one_card_per_funnel_stage(ds):
+    tex = kpi_cards(ds)
+    for stage in ("TAM", "SAM", "SOM"):
+        assert f"\\kpicard{{{stage}}}" in tex
+    assert tex.count("\\kpicard") == 3

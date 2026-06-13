@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-% --- Hebrew RTL typesetting: XeLaTeX + polyglossia (loads bidi for RTL) ---
+% --- Hebrew RTL typesetting: LuaLaTeX + polyglossia (loads bidi for RTL) ---
 \usepackage{fontspec}
 \usepackage{polyglossia}
 \setmainlanguage{hebrew}
@@ -10,22 +10,93 @@
 % variable below — render.py passes -V hebrewfont=<book.json.hebrew_font>.
 \newfontfamily\hebrewfont[Script=Hebrew]{$hebrewfont$}
 \setmainfont[Script=Hebrew]{$hebrewfont$}
+\newfontfamily\hebrewfontsf[Script=Hebrew]{$hebrewfont$}
+\newfontfamily\hebrewfonttt[Script=Hebrew]{$hebrewfont$}
+
+% --- Page geometry & brand palette (sampled from the logo) ---
+\usepackage[a4paper,margin=2.4cm,top=2.7cm,bottom=2.5cm]{geometry}
+\usepackage[table,dvipsnames]{xcolor}
+\definecolor{brandteal}{HTML}{0B5D4E}
+\definecolor{brandgold}{HTML}{E5B53C}
+\definecolor{brandtint}{HTML}{EAF1EF}
+\definecolor{brandink}{HTML}{1B2A27}
 
 % --- Report building blocks ---
-\usepackage{booktabs}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
+\usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \graphicspath{{$assetdir$/}}
 \usepackage{amsmath}
+\usepackage{longtable}
+\usepackage[most]{tcolorbox}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
 \usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=brandteal, linkcolor=brandteal,
+  pdftitle={$title$}, pdfauthor={$author$}}
+
+\color{brandink}
+\linespread{1.18}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt}
+
+% Pandoc helper macros (defined here because we ship a custom template).
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+\tolerance=2500
+\emergencystretch=3em
+
+% --- Coloured section headings with a gold underrule ---
+\titleformat{\section}{\Large\bfseries\color{brandteal}}{\thesection}{0.6em}{}
+  [{\vspace{2pt}\color{brandgold}\titlerule[1.4pt]}]
+\titleformat{\subsection}{\large\bfseries\color{brandteal!88}}
+  {\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{14pt}{8pt}
+
+% --- Running header / footer ---
+\newcommand{\booktitle}{$title$}
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[C]{\footnotesize\color{brandteal!75}\booktitle}
+\fancyfoot[C]{\colorbox{brandteal}{\textcolor{white}{\,\thepage\,}}}
+
+% --- KPI card + equation-panel macros used by the data dashboard ---
+\newcommand{\kpicard}[2]{%
+  \begin{tcolorbox}[width=3.7cm,height=2.5cm,colback=brandteal,
+    colframe=brandgold,boxrule=1pt,arc=3pt,halign=center,valign=center,
+    left=2pt,right=2pt]%
+    {\color{brandgold}\large\bfseries #1}\\[3pt]
+    {\color{white}\LARGE\bfseries #2}%
+  \end{tcolorbox}}
+\newtcolorbox{eqbox}{colback=brandtint,colframe=brandteal,boxrule=0.8pt,
+  arc=2pt,left=10pt,right=10pt,top=8pt,bottom=8pt}
 
 \title{$title$}
 \author{$author$}
 \date{}
 
 \begin{document}
-\maketitle
+
+% --- Cover page ---
+\begin{titlepage}
+\thispagestyle{empty}\centering
+\vspace*{1.2cm}
+{\color{brandgold}\rule{\linewidth}{3pt}}\\[10pt]
+\IfFileExists{$assetdir$/alyasmeen.png}{%
+  \includegraphics[width=0.62\linewidth]{alyasmeen.png}\\[28pt]}{}
+{\Huge\bfseries\color{brandteal} $title$}\\[14pt]
+{\large\color{brandink} $author$}\\[6pt]
+\vfill
+{\color{brandteal}\rule{\linewidth}{1.4pt}}\\[6pt]
+{\footnotesize\color{brandteal!70} \today}
+\end{titlepage}
+
+\clearpage
+{\color{brandteal}\tableofcontents}
+\clearpage
 
 $body$
 

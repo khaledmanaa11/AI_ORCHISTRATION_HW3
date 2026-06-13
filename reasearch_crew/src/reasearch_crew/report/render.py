@@ -25,6 +25,7 @@ def markdown_to_latex(md: Path, tex: Path, *, template: Path) -> Path:
         "--standalone",
         "--template",
         str(template),
+        "--no-highlight",
         f"--pdf-engine={cfg['pdf_engine']}",
         "-V",
         f"hebrewfont={cfg['hebrew_font']}",
@@ -35,7 +36,10 @@ def markdown_to_latex(md: Path, tex: Path, *, template: Path) -> Path:
         "-V",
         f"author={cfg['author']}",
     ]
-    proc = subprocess.run(argv, capture_output=True, text=True)
+    proc = subprocess.run(
+        argv, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
     if proc.returncode != 0:
         raise TypesetError(f"pandoc failed ({proc.returncode}): {proc.stderr}")
     return Path(tex)

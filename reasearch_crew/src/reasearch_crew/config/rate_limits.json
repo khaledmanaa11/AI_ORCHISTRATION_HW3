@@ -9,6 +9,7 @@
     "gemini":     { "rpm": 5, "tpm": 1000000, "burst": 2 },
     "openrouter": { "rpm": 20, "tpm": null, "burst": 5 },
     "anthropic":  { "rpm": 50, "tpm": 40000, "burst": 10 },
-    "serper":     { "rpm": 60, "tpm": null, "burst": 5 }
+    "serper":     { "rpm": 60, "tpm": null, "burst": 5 },
+    "gemini_image": { "rpm": 5, "tpm": null, "burst": 1 }
   }
 }

@@ -8,6 +8,7 @@ from reasearch_crew import settings
 from reasearch_crew.crew import ReasearchCrew
 from reasearch_crew.gateway import flush
 from reasearch_crew.report.compose import compose_book
+from reasearch_crew.report.cover import generate_cover
 from reasearch_crew.report.outline import section_outline
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
@@ -45,6 +46,8 @@ def run():
             research_brief,
             settings.output_path("book_md"),
         )
+
+        generate_cover()
 
         crew_obj.typeset_crew().kickoff(inputs=inputs)
     except Exception as e:

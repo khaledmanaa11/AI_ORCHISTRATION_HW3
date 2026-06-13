@@ -10,7 +10,7 @@ from reasearch_crew.report.errors import TypesetError
 def _capture(monkeypatch, returncode=0, stderr=""):
     calls = []
 
-    def fake_run(argv, capture_output=False, text=False):
+    def fake_run(argv, capture_output=False, text=False, **kwargs):
         calls.append(argv)
         return SimpleNamespace(returncode=returncode, stdout="", stderr=stderr)
 

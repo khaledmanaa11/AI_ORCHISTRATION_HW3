@@ -29,9 +29,14 @@ def compile_pdf(tex: Path) -> Path:
         str(tex),
     ]
     for _ in range(2):
-        proc = subprocess.run(argv, capture_output=True, text=True)
+        proc = subprocess.run(
+            argv, capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+        )
         if proc.returncode != 0:
             raise TypesetError(
-                f"xelatex failed ({proc.returncode}): {proc.stderr[-500:]}"
+                f"xelatex failed ({proc.returncode}):\n"
+                f"STDERR: {(proc.stderr or '')[-500:]}\n"
+                f"STDOUT: {(proc.stdout or '')[-1500:]}"
             )
     return outdir / f"{jobname}.pdf"

@@ -20,6 +20,13 @@
     "book_tex": "output/book.he.tex",
     "book_pdf": "output/book.pdf",
     "template": "templates/book.he.tex",
-    "assets": "assets"
+    "assets": "assets",
+    "cover": "cover.png"
+  },
+  "cover": {
+    "model": "imagen-3.0-generate-002",
+    "fallback": "alyasmeen.png",
+    "timeout": 60.0,
+    "prompt_template": "A premium, elegant book cover for '{title}'. Subject: {topic}. Minimalist branding with a jasmine flower motif, soft green and cream palette, refined typography space, no embedded text."
   }
 }
