@@ -6,7 +6,7 @@
   "language": "he",
   "hebrew_font": "David",
   "page_target": 30,
-  "pages_per_section": 3,
+  "pages_per_section": 4,
   "words_per_page": 300,
   "pdf_engine": "lualatex",
   "bin": {

@@ -30,6 +30,13 @@ research_task:
     (the URL it came from). Example:
     {"name": "tam", "label": "TAM", "value": 1200000000, "unit": "USD",
     "source": "https://..."}. Never emit a figure without a source.
+
+    Every value MUST be a real, positive, non-zero number, and every source
+    MUST be a real URL you actually used — never 0, never "unverified", never a
+    placeholder. sam_share and som_share are fractions strictly between 0 and 1
+    (e.g. 0.15, 0.05): estimate them from the data if no single source states
+    them outright, but never leave them at 0. A zero or "unverified" figure
+    breaks the downstream market-sizing math, so research the number instead.
   agent: researcher
   output_file: output/research.md
 
