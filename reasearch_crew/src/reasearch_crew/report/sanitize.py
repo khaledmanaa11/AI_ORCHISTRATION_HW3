@@ -61,27 +61,40 @@ def _unwrap_outer_markdown(text: str) -> str:
     return stripped
 
 
+def _dedent_prose(text: str) -> str:
+    """Strip leading indentation so pandoc never reads prose as a code block.
+
+    The Author routinely nests bullets four spaces deep (``    *   ``); pandoc
+    turns any four-plus-space-indented line into a verbatim block, which then
+    renders unwrapped and runs off both page margins. Flattening the indent
+    keeps the bullets as ordinary list items that wrap normally."""
+    return "\n".join(line.lstrip() for line in text.splitlines())
+
+
 def _strip_leak_fences(text: str) -> str:
-    """Remove fenced blocks whose info string is a deterministic-artifact class."""
+    """Drop fenced blocks: artifact classes go entirely, the rest is unwrapped.
+
+    The book is pure prose, so no code fence should survive. A fence tagged with
+    a deterministic-artifact class (table/json/latex…) is a leaked duplicate, so
+    its markers AND body are dropped. Any other fence — a bare ``` or an unknown
+    language — is just mis-fenced prose: drop only the markers and keep the text
+    so it wraps, instead of becoming a verbatim block that runs off the page (a
+    dangling bare fence would also swallow the deterministic tail as raw text)."""
     out: list[str] = []
     fence: str | None = None
-    skipping = False
+    dropping = False
     for line in text.splitlines():
         match = _FENCE.match(line.strip())
         if fence is None and match:
             ticks, info = match.group(1), match.group(2).strip("{}=").lower()
             fence = ticks[0] * 3
-            skipping = info in _LEAK_CLASSES
-            if not skipping:
-                out.append(line)
+            dropping = info in _LEAK_CLASSES
             continue
         if fence is not None and line.strip().startswith(fence):
-            if not skipping:
-                out.append(line)
             fence = None
-            skipping = False
+            dropping = False
             continue
-        if not skipping:
+        if not dropping:
             out.append(line)
     return "\n".join(out)
 
@@ -145,11 +158,13 @@ def clean_narrative(text: str) -> str:
     """Return the Author's prose with leaked artifacts and duplicates removed.
 
     Order matters: cut any prior deterministic tail first, unwrap an outer
-    ```markdown fence, drop a leaked filename heading, then strip invented
-    table/graph/json fences. The result is pure narrative ready for assembly.
+    ```markdown fence, dedent so no prose is read as code, drop a leaked
+    filename heading, then strip invented table/graph/json fences. The result
+    is pure narrative ready for assembly.
     """
     text = _cut_deterministic_tail(text)
     text = _unwrap_outer_markdown(text)
+    text = _dedent_prose(text)
     text = _drop_leading_h1(text)
     text = _strip_leak_fences(text)
     text = _strip_pipe_tables(text)

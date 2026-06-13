@@ -145,3 +145,31 @@ def test_plain_prose_passes_through_unchanged():
     out = clean_narrative(text)
     assert "פסקה ראשונה." in out and "פסקה שנייה." in out
     assert out.endswith("\n")
+
+
+def test_dedents_indented_bullets_so_they_are_not_code():
+    # The Author nests bullets 4 spaces deep; pandoc would read that as a
+    # verbatim code block that runs off the page. Dedent flattens them.
+    text = "## פרסונות\n\n    *   **רקע**: עסק קטן.\n    *   **צרכים**: כלי.\n"
+    out = clean_narrative(text)
+    assert "**רקע**: עסק קטן." in out
+    assert not any(ln.startswith("    ") for ln in out.splitlines())
+
+
+def test_unwraps_bare_code_fence_keeping_prose():
+    # A bare ``` fence is mis-fenced prose, not an artifact: drop the markers
+    # but keep the text so it wraps instead of becoming verbatim.
+    text = "## א\n\nלפני.\n\n```\nשורה בתוך גדר ריקה.\n```\n\nאחרי.\n"
+    out = clean_narrative(text)
+    assert "שורה בתוך גדר ריקה." in out
+    assert "```" not in out
+    assert "לפני." in out and "אחרי." in out
+
+
+def test_dangling_bare_fence_does_not_swallow_following_text():
+    # An unclosed bare fence used to absorb everything after it (incl. the
+    # appended deterministic block) as raw verbatim text.
+    text = "## א\n\nגוף.\n\n```\nתוכן אחרי גדר פתוחה.\n"
+    out = clean_narrative(text)
+    assert "תוכן אחרי גדר פתוחה." in out
+    assert "```" not in out
