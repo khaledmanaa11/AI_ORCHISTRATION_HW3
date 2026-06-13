@@ -7,25 +7,32 @@ research_task:
   expected_output: >
     A markdown brief saved as research.md. First, 8-10 prose findings with an
     inline source URL each. Then a SINGLE fenced block tagged `figures`
-    containing a JSON array; every object MUST have name, label, value
-    (number), unit, and source (the URL it came from). Example object:
+    containing a JSON array of EXACTLY 8 objects with these names (use these
+    exact name values — the downstream code depends on them):
+
+    1. "tam" — total addressable market in USD
+
+    2. "sam_share" — SAM as a FRACTION of TAM (e.g. 0.15 means 15%)
+
+    3. "som_share" — SOM as a FRACTION of SAM (e.g. 0.05 means 5%)
+
+    4. "arpu" — average revenue per user per month in USD
+
+    5. "gross_margin" — gross margin as a DECIMAL fraction (e.g. 0.75)
+
+    6. "churn" — monthly churn rate as a DECIMAL fraction (e.g. 0.04)
+
+    7. "marketing_spend" — total annual marketing spend in USD
+
+    8. "customers_acquired" — total customers acquired in the period
+
+    Every object MUST have name, label, value (number), unit, and source
+    (the URL it came from). Example:
     {"name": "tam", "label": "TAM", "value": 1200000000, "unit": "USD",
     "source": "https://..."}. Never emit a figure without a source.
   agent: researcher
   output_file: output/research.md
 
-writing_task:
-  description: >
-    כתוב ספר מחקר שוק בעברית על {topic}, על בסיס תקציר המחקר בלבד.
-    כתוב כל סעיף מהמתווה הבא במלואו, סעיף אחר סעיף, ללא קיצור:
-    {outline}. שלב את הטבלה, התרשים (גרף), הפניה לתמונה והמשוואות.
-  expected_output: >
-    מסמך Markdown בעברית בשם book.he.md הכולל: תקציר (abstract),
-    טבלת נתונים (table), גרף/תרשים (graph), הפניה לתמונה (figure),
-    וסעיף משוואות (equations). על המסמך להגיע ליעד העמודים שהוגדר,
-    מפותח סעיף אחר סעיף.
-  agent: author
-  output_file: output/book.he.md
 
 typeset_task:
   description: >

@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 from reasearch_crew.gateway import telemetry
+from reasearch_crew.gateway import rate_limiter
 from reasearch_crew.report import compile as compile_mod
 from reasearch_crew.report import render as render_mod
 
@@ -26,13 +27,13 @@ _RESEARCH_MD = """# מחקר שוק אליאסמין
 ```
 """
 
-_BOOK_PROSE = "# הספר\n\nתקציר מנהלים בעברית.\n"
 
-
-def _fake_subprocess(argv, capture_output=False, text=False):
+def _fake_subprocess(argv, capture_output=False, text=False, **kwargs):
     """Stand in for pandoc/xelatex: actually create the output artifact."""
-    if any(a.startswith("-jobname=") for a in argv):  # xelatex
-        outdir = next(a.split("=", 1)[1] for a in argv if a.startswith("-output-directory="))
+    if any(a.startswith("-jobname=") for a in argv):  # xelatex / lualatex
+        outdir = next(
+            a.split("=", 1)[1] for a in argv if a.startswith("-output-directory=")
+        )
         job = next(a.split("=", 1)[1] for a in argv if a.startswith("-jobname="))
         Path(outdir, f"{job}.pdf").write_bytes(b"%PDF-1.5\n")
     else:  # pandoc
@@ -44,8 +45,10 @@ def _fake_subprocess(argv, capture_output=False, text=False):
 @pytest.fixture(autouse=True)
 def _reset():
     telemetry.reset()
+    rate_limiter.reset()
     yield
     telemetry.reset()
+    rate_limiter.reset()
 
 
 def test_full_chain(api_key, monkeypatch, tmp_path, capsys):
@@ -69,8 +72,6 @@ def test_full_chain(api_key, monkeypatch, tmp_path, capsys):
         self.llm.call([{"role": "user", "content": "x"}])  # bank some tokens
         if "Research" in self.role:
             return _RESEARCH_MD
-        if "מחבר" in self.role:
-            return _BOOK_PROSE
         from reasearch_crew.tools.typeset import render_and_compile
 
         return render_and_compile()
@@ -92,6 +93,7 @@ def test_full_chain(api_key, monkeypatch, tmp_path, capsys):
         assert (out / artifact).exists(), f"missing {artifact}"
 
     # flush() reported token totals for the Gemini provider (§11).
+    # researcher(10) + 12 compose sections × 10 + typesetter(10) = 140
     printed = capsys.readouterr().out
     assert "gateway[gemini]" in printed
-    assert "in_tokens=30" in printed  # 3 agents * 10
+    assert "in_tokens=140" in printed

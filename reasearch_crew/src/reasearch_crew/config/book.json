@@ -7,10 +7,11 @@
   "hebrew_font": "David",
   "page_target": 30,
   "pages_per_section": 3,
-  "pdf_engine": "xelatex",
+  "words_per_page": 300,
+  "pdf_engine": "lualatex",
   "bin": {
     "pandoc": "C:/Users/Hp/AppData/Local/Pandoc/pandoc.exe",
-    "xelatex": "xelatex"
+    "xelatex": "lualatex"
   },
   "paths": {
     "research_md": "output/research.md",

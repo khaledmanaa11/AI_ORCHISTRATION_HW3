@@ -19,15 +19,58 @@ def test_outline_defaults_from_book_json():
     assert "תקציר מנהלים" in outline
 
 
-def test_author_task_targets_hebrew_book(api_key):
-    from reasearch_crew.crew import ReasearchCrew
+# ── compose_book unit tests (D16) ────────────────────────────────────────────
 
-    crew_obj = ReasearchCrew().crew()
-    author_task = next(
-        t for t in crew_obj.tasks if t.output_file == "output/book.he.md"
-    )
-    out = author_task.expected_output
-    for element in ("abstract", "table", "graph", "figure", "equations"):
-        assert element in out
-    author = next(a for a in crew_obj.agents if "מחבר" in a.role)
-    assert author is not None
+_FAKE_CFG = {
+    "page_target": 9,
+    "pages_per_section": 3,
+    "words_per_page": 400,
+    "paths": {"book_md": "output/book.he.md"},
+}
+
+
+class _FakeLLM:
+    def __init__(self):
+        self.calls: list[list[dict]] = []
+
+    def call(self, messages, *args, **kwargs):
+        self.calls.append(messages)
+        return {"choices": [{"message": {"content": "stub text"}}], "usage": {}}
+
+
+def test_compose_calls_once_per_section(tmp_path, monkeypatch):
+    from reasearch_crew import settings as _s
+    monkeypatch.setattr(_s, "book_config", lambda *a, **k: _FAKE_CFG)
+    from reasearch_crew.report.compose import compose_book
+
+    llm = _FakeLLM()
+    compose_book(llm, "brief", tmp_path / "book.he.md")
+
+    expected = section_outline(page_target=9, pages_per_section=3)
+    assert len(llm.calls) == len(expected)
+
+
+def test_compose_headings_in_order(tmp_path, monkeypatch):
+    from reasearch_crew import settings as _s
+    monkeypatch.setattr(_s, "book_config", lambda *a, **k: _FAKE_CFG)
+    from reasearch_crew.report.compose import compose_book
+
+    book_md = tmp_path / "book.he.md"
+    compose_book(_FakeLLM(), "brief", book_md)
+
+    content = book_md.read_text(encoding="utf-8")
+    for sec in section_outline(page_target=9, pages_per_section=3):
+        assert f"## {sec}" in content
+
+
+def test_compose_word_floor_from_config(tmp_path, monkeypatch):
+    from reasearch_crew import settings as _s
+    monkeypatch.setattr(_s, "book_config", lambda *a, **k: _FAKE_CFG)
+    from reasearch_crew.report.compose import compose_book
+
+    llm = _FakeLLM()
+    compose_book(llm, "brief", tmp_path / "book.he.md")
+
+    # min_words must come from config (400 * 3 = 1200), not a literal
+    expected_floor = str(_FAKE_CFG["words_per_page"] * _FAKE_CFG["pages_per_section"])
+    assert expected_floor in llm.calls[0][0]["content"]

@@ -51,55 +51,62 @@ class ReasearchCrew():
     @agent
     def researcher(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['researcher'],  # type: ignore[index]
             llm=_get_llm(),
             tools=[web_search_tool],
             verbose=True,
         )
 
     @agent
-    def author(self) -> Agent:
-        return Agent(
-            config=self.agents_config['author'], # type: ignore[index]
-            llm=_get_llm(),
-            verbose=True,
-        )
-
-    @agent
     def typesetter(self) -> Agent:
         return Agent(
-            config=self.agents_config['typesetter'], # type: ignore[index]
+            config=self.agents_config['typesetter'],  # type: ignore[index]
             llm=_get_llm(),
             tools=[render_and_compile_tool],
             verbose=True,
         )
 
+    def get_llm(self) -> GatekeptLLM:
+        """Expose the shared GatekeptLLM for the compose phase."""
+        return _get_llm()
+
     @task
     def research_task(self) -> Task:
         Path("output").mkdir(exist_ok=True)
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
-        )
-
-    @task
-    def writing_task(self) -> Task:
-        Path("output").mkdir(exist_ok=True)
-        return Task(
-            config=self.tasks_config['writing_task'], # type: ignore[index]
+            config=self.tasks_config['research_task'],  # type: ignore[index]
         )
 
     @task
     def typeset_task(self) -> Task:
         return Task(
-            config=self.tasks_config['typeset_task'], # type: ignore[index]
+            config=self.tasks_config['typeset_task'],  # type: ignore[index]
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the ReasearchCrew crew"""
+        """Creates the ReasearchCrew crew (research + typeset only)."""
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
+            process=Process.sequential,
+            verbose=True,
+        )
+
+    def research_crew(self) -> Crew:
+        """Single-task crew for Phase 1 (research only)."""
+        return Crew(
+            agents=[self.researcher()],
+            tasks=[self.research_task()],
+            process=Process.sequential,
+            verbose=True,
+        )
+
+    def typeset_crew(self) -> Crew:
+        """Single-task crew for Phase 3 (typeset only)."""
+        return Crew(
+            agents=[self.typesetter()],
+            tasks=[self.typeset_task()],
             process=Process.sequential,
             verbose=True,
         )
