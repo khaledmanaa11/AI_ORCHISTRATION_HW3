@@ -1,6 +1,6 @@
 # PROGRESS — single source of truth
 
-NEXT: D15
+NEXT: §11 token-cost analysis (capture real in/out tokens) + §17 submission checklist
 
 > Each session: do the step named in NEXT, then move NEXT to the line below it.
 > Legend: [ ] todo · [x] done · [~] in progress · [!] blocked.
@@ -67,8 +67,12 @@ Triplet: [PRD](PRD_market_book.md) · [PLAN](PLAN_market_book.md) · [TODO](TODO
   and Typesetter plus cover generation (`GEMINI_API_KEY_TYPESET`). Centralize credential
   resolution beside the gateway, isolate tests from real `.env` values, and update setup
   documentation. Triplet approved 2026-06-13.
-- [ ] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX; Director opens
-  `output/book.pdf`, confirms ≥30 pp + the generated cover, pastes `flush()` token totals.
+- [x] D15 — [HUMAN] Live `uv run run_crew` with real keys + TeX. Live research (flash,
+  27 gemini calls) produced 8 real sourced figures + a 20.9k-word compose; the run
+  exposed two parser/typeset gaps (unclosed ```json fence; verbatim overflow) fixed in
+  502a79c/ab29ee2. `output/book.pdf` rebuilt offline from the live data: 41 pp, AI cover,
+  real TAM→SAM→SOM ($45B→$9.86B→$296M). CAVEAT (§11): `flush()` reported 0 in/out tokens —
+  litellm usage not surfaced for gemini; token-cost analysis still owed at submission.
 
 ### Blocked steps
 _(none yet)_
