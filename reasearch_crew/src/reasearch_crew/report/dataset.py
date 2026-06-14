@@ -7,6 +7,7 @@ from pathlib import Path
 
 _FIGURES_BLOCK = re.compile(r"```figures\s*(.+?)```", re.DOTALL)
 _JSON_ARRAY = re.compile(r"```(?:json|figures)?\s*\n?(\[.*?\])\s*\n?```", re.DOTALL)
+_ARRAY_OF_OBJECTS = re.compile(r"\[\s*\{.*?\}\s*\]", re.DOTALL)
 _REQUIRED = ("name", "value", "unit", "source")
 
 
@@ -67,13 +68,18 @@ def _figures_block(text: str) -> str:
     """Find the figures JSON, tolerating ```figures / ```json / untagged fences.
 
     Live LLMs routinely tag the array ```json (or leave it bare) instead of the
-    ```figures we ask for, so the deterministic tail must not depend on the tag.
-    An explicit ```figures block still wins, preserving its strict error shape.
+    ```figures we ask for — and just as often forget to close the fence, so the
+    payload ends at ']' with no trailing ```. The deterministic tail must not
+    depend on the tag OR the fence: an explicit ```figures block still wins
+    (preserving its strict error shape); otherwise we take the first fenced
+    array shaped like figures, and failing that the first bare array of objects.
     """
     explicit = _FIGURES_BLOCK.search(text)
     if explicit:
         return explicit.group(1)
-    for body in _JSON_ARRAY.findall(text):
+    fenced = _JSON_ARRAY.findall(text)
+    bare = _ARRAY_OF_OBJECTS.findall(text)
+    for body in (*fenced, *bare):
         try:
             rows = json.loads(body)
         except json.JSONDecodeError:

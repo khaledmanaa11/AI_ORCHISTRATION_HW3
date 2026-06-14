@@ -135,3 +135,21 @@ def test_non_figure_json_object_is_skipped():
     figs = parse_figures(_DECOY_THEN_FIGURES)
     assert len(figs) == 1
     assert figs[0].name == "arpu"
+
+
+# The live Researcher opened ```markdown and ```json but never closed either,
+# so the payload ends at ']' with no trailing fence — the D15 crash.
+_UNCLOSED_FENCE = (
+    "```markdown\nprose about the market.\n\n```json\n[\n"
+    '  {"name": "tam", "value": 45000000000, "unit": "USD",\n'
+    '   "source": "https://e.example"},\n'
+    '  {"name": "arpu", "value": 79, "unit": "USD",\n'
+    '   "source": "https://f.example"}\n]'
+)
+
+
+def test_unclosed_fence_parses():
+    """An unclosed ```json fence (payload ending at ']') must still parse."""
+    figs = parse_figures(_UNCLOSED_FENCE)
+    assert [f.name for f in figs] == ["tam", "arpu"]
+    assert figs[0].value == 45000000000.0
