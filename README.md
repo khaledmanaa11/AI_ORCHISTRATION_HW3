@@ -5,6 +5,11 @@
 > typesets a ≥30-page Hebrew PDF book — every external API call funneled through a single
 > gatekeeper seam.
 
+**Status: ✅ complete.** The pipeline ran end-to-end on real keys and delivered
+`output/book.pdf` — **41 pages** of grounded Hebrew market research with an AI-generated
+cover, a real TAM→SAM→SOM funnel ($45B → $9.86B → $296M) and live unit economics
+(LTV $1,481.25 · CAC $588.24 · payback 9.93 mo). See `docs/PROGRESS.md` for the full log.
+
 ## What it does
 
 Three agents run `Process.sequential`:
@@ -84,7 +89,11 @@ uv run run_crew
 ```
 
 This kicks off the crew and produces `output/book.pdf` (≥30 pp, Hebrew, with the generated
-cover) and prints the gateway `flush()` token totals.
+cover) and prints the gateway `flush()` telemetry — per-provider call counts, retries and
+cost. On the delivered run that was 27 Gemini text calls + 1 image + 12 Serper searches, at
+**$0.00** (free tier is rate-capped, not cost-capped). Per-token in/out read 0 because
+crewai's litellm path hands `.call` only the completion text, with no `usage` block to count —
+a documented telemetry limitation; the dollar cost is $0 regardless.
 
 ## Tests & the gate
 

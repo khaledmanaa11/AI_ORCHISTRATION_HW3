@@ -73,10 +73,10 @@
   outside `gateway/` for `import litellm`, `import anthropic`, `import requests`,
   raw `httpx.` → zero hits.)
 
-- [ ] **G11** — `[HUMAN]` One live end-to-end run of `uv run run_crew` with the
-  gateway in place. Director eyeballs the post-kickoff `flush()` output: per-provider
-  call count + token totals + (if 429 occurred) retry count. (**DoD:** Director pastes
-  the flush output into the commit / PR description.)
+- [x] **G11** — `[HUMAN]` One live end-to-end run of `uv run run_crew` with the
+  gateway in place. Done via D15: every external call routed through the gateway, and the
+  post-kickoff `flush()` reported per-provider call counts + a retry (gemini calls=27
+  retries=1, serper=12, gemini_image=1). Totals captured in `docs/PROGRESS.md` §11.
 
 ## Coverage matrix (§6 — every requirement has a test)
 

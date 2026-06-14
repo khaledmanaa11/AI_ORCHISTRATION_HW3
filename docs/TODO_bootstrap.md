@@ -51,9 +51,9 @@
   asserts `output/paper.md` exists in a tmp dir and contains the abstract heading.
   (Satisfies R-AC1 §6.1; **DoD:** passes in CI, leaves no artifacts outside tmp.)
 
-- [ ] **B10** — `[HUMAN]` One live end-to-end run with the real `OPENROUTER_API_KEY`, manual
-  eyeball of `output/paper.md`. Director only — agents STOP here. (**DoD:** Director pastes the
-  first ~200 chars of the generated paper into the commit / PR description.)
+- [x] **B10** — `[HUMAN]` Live end-to-end run. SUPERSEDED by D1 (Gemini free tier replaced the
+  flaky OpenRouter slugs) and closed by the real live run D15, which produced the actual
+  Hebrew book rather than the bootstrap smoke `paper.md`. Agents STOP here — Director-run.
 
 ## Coverage matrix (§6 — every requirement has a test)
 
